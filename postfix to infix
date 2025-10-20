@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 100
+
+char stack[MAX][MAX];
+int top = -1;
+
+void push(char *str) {
+    if (top == MAX - 1) {
+        printf("\nStack overflow!\n");
+        return;
+    }
+    strcpy(stack[++top], str);
+}
+
+char *pop() {
+    if (top == -1) {
+        printf("\nStack underflow!\n");
+        return NULL;
+    }
+    return stack[top--];
+}
+
+void postfixToInfix(char postfix[]) {
+    char op1[MAX], op2[MAX], temp[MAX];
+    int i;
+    char ch;
+
+    for (i = 0; postfix[i] != '\0'; i++) {
+        ch = postfix[i];
+
+        if (isalnum(ch)) {  // Operand
+            char operand[2] = {ch, '\0'};
+            push(operand);
+        } else {  // Operator
+            char *b = pop();
+            char *a = pop();
+
+            if (a == NULL || b == NULL) {
+                printf("\nInvalid postfix expression!\n");
+                return;
+            }
+
+            snprintf(temp, sizeof(temp), "(%s%c%s)", a, ch, b);
+            push(temp);
+        }
+    }
+
+    if (top == 0)
+        printf("\nInfix Expression: %s\n", stack[top]);
+    else
+        printf("\nInvalid postfix expression!\n");
+}
+
+int main() {
+    int choice;
+    char postfix[MAX];
+
+    while (1) {
+        printf("\n--- Postfix to Infix Menu ---");
+        printf("\n1. Convert Postfix to Infix");
+        printf("\n2. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter a postfix expression: ");
+                scanf("%s", postfix);
+                postfixToInfix(postfix);
+                break;
+
+            case 2:
+                printf("Exiting...\n");
+                return 0;
+
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+
+    return 0;
+}
