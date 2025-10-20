@@ -1,64 +1,81 @@
-#include <stdio.h>
+#include<stdio.h>
+
 #include <stdlib.h>
-
-struct Node {
+struct Node
+{
     int data;
-    struct Node* next;
-};
-
-struct Node* front = NULL;
-struct Node* rear = NULL;
-
-void enqueue(int value) {
-    struct Node* newnode = (struct Node*)malloc(sizeof(struct Node));
-    if (newnode == NULL) {
-        printf("Memory allocation failed\n");
-        return;
+    struct Node *next;
+}*front=NULL,*rear=NULL;
+void enqueue()
+{
+    struct Node *newnode=(struct Node*)malloc(sizeof(struct Node));
+    printf("Enter data:");
+    scanf("%d",&newnode->data);
+    newnode->next=NULL;
+    if(front==NULL)
+    {
+    front=newnode;
+    rear=newnode;
     }
-    newnode->data = value;
-    newnode->next = NULL;
-    if (front == NULL) {
-        front = newnode;
-        rear = newnode;
-    } else {
-        rear->next = newnode;
-        rear = newnode;
+    else
+    {
+    rear->next=newnode;
+    rear=newnode;
     }
-}
-
-void dequeue() {
-    if (front == NULL) {
-        printf("The queue is empty\n");
-        return;
     }
-    struct Node* temp = front;
-    front = front->next;
+int dequeue()
+{
+    if (front==NULL)
+    {printf("Queue is empty...underflow");return -1;}
+    else
+    {
+    struct Node *temp;
+    temp=front;
+    int rv=front->data;
+    front=front->next;
+    if(front==NULL) rear=NULL;
     free(temp);
-    if (front == NULL) {
-        rear = NULL; // If queue becomes empty, reset rear too
+    return(rv);
     }
 }
+void displayQ()
+{
+    struct Node *temp=front;
+    while(temp!=NULL)
+    {
+    printf(" %d---->",temp->data);
+    temp=temp->next;
+    }
+    printf(" NULL");
+}
+void main()
+{
+    int ch;
 
-void display() {
-    if (front == NULL) {
-        printf("Queue is empty\n");
-        return;
+do
+{
+printf("\nMenu\n----\n1.Enqueue\n2.Dequeue\n3.Display\n4.Exit");
+printf("\nEnter the choice:");
+scanf("%d",&ch);
+switch(ch)
+{
+case 1:
+    enqueue();
+    displayQ();
+    break;
+case 2:
+    int data;
+    data=dequeue();
+    if(data!=-1)
+        printf("The dequed data is:%d\n",data);
+    displayQ();
+    break;
+case 3:
+    displayQ();
+    break;
+case 4:
+    exit(0);
+default:
+    printf("There is no such operation:");
     }
-    struct Node* temp = front;
-    printf("Displaying contents of the queue: ");
-    while (temp != NULL) {
-        printf("%d -> ", temp->data);
-        temp = temp->next;
-    }
-    printf("NULL\n");
-}
-
-int main() {
-    enqueue(10);
-    enqueue(20);
-    enqueue(30);
-    display();
-    dequeue();
-    display();
-    return 0;
-}
+  }
