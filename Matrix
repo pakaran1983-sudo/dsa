@@ -1,48 +1,84 @@
-# include<stdio.h>
-# define MAX 100
-int main()
-{
-int matrix[MAX][MAX],sprase[MAX][3],rows,cols;
-int i,j,k=0;
+#include <stdio.h>
+#define MAX 100
 
-printf("Enter the number of rows");
-scanf("%d",&rows);
-printf("Enter the nuber of columns");
-scanf("%d",&cols);
+int matrix[MAX][MAX], sparse[MAX][3];
+int rows, cols;
 
-printf("Enter the matrix elements");
-for(i=0;i<rows;i++)
-{
-for(j=0;j<cols;j++)
-{
-scanf("%d",&matrix[i][j]);
-}
+void readMatrix() {
+    printf("Enter number of rows: ");
+    scanf("%d", &rows);
+    printf("Enter number of columns: ");
+    scanf("%d", &cols);
+
+    printf("Enter the matrix elements:\n");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
 }
 
-sprase[0][0]=rows;
-sprase[0][1]=cols;
-sprase[0][2]=0;
+void displayMatrix() {
+    printf("Matrix elements:\n");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
 
-for(i=0;i<rows;i++)
-{
-for(j=0;j<cols;j++)
-{
-if(matrix[i][j]!=0)
-{
-k++;
-sprase[k][0]=i;
-sprase[k][1]=j;
-sprase[k][2]=matrix[i][j];
-}
-}
-}
-sprase[0][2]=k;
+void convertToSparse() {
+    int k = 0;
+    sparse[0][0] = rows;
+    sparse[0][1] = cols;
+    sparse[0][2] = 0;
 
-printf("Sprase matrix representation \n");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (matrix[i][j] != 0) {
+                k++;
+                sparse[k][0] = i;
+                sparse[k][1] = j;
+                sparse[k][2] = matrix[i][j];
+            }
+        }
+    }
+    sparse[0][2] = k;
 
-for(i=0;i<=k;i++)
-{
-printf(" %d %d %d", sprase[i][0],sprase[i][1],sprase[i][2]);
+    printf("\nSparse matrix representation (row, column, value):\n");
+    for (int i = 0; i <= k; i++) {
+        printf("%d\t%d\t%d\n", sparse[i][0], sparse[i][1], sparse[i][2]);
+    }
 }
-return 0;
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n---- MENU ----\n");
+        printf("1. Enter Matrix\n");
+        printf("2. Display Matrix\n");
+        printf("3. Convert to Sparse Matrix\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            readMatrix();
+            break;
+        case 2:
+            displayMatrix();
+            break;
+        case 3:
+            convertToSparse();
+            break;
+        case 4:
+            printf("Exiting program.\n");
+            return 0;
+        default:
+            printf("Invalid choice! Try again.\n");
+        }
+    }
 }
