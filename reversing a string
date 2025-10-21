@@ -8,20 +8,23 @@ int top = -1;
 void push(char c) {
     if (top < MAX - 1)
         stack[++top] = c;
+    else
+        printf("Stack Overflow!\n");
 }
 
 char pop() {
     if (top >= 0)
         return stack[top--];
+    else
+        printf("Stack Underflow!\n");
     return '\0';
 }
 
-int main() {
-    char str[MAX], rev[MAX];
+void reverseString(char str[]) {
     int i = 0;
+    char rev[MAX];
 
-    printf("Enter a string: ");
-    scanf("%s", str);
+    top = -1; // reset stack for new operation
 
     while (str[i] != '\0')
         push(str[i++]);
@@ -32,5 +35,35 @@ int main() {
 
     rev[i] = '\0';
     printf("Reversed string: %s\n", rev);
+}
+
+int main() {
+    char str[MAX];
+    int choice;
+
+    while (1) {
+        printf("\n---- MENU ----\n");
+        printf("1. Enter a string\n");
+        printf("2. Reverse the string\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter the string: ");
+            scanf("%s", str);
+            break;
+        case 2:
+            reverseString(str);
+            break;
+        case 3:
+            printf("Exiting program.\n");
+            return 0;
+        default:
+            printf("Invalid choice! Try again.\n");
+        }
+    }
+
     return 0;
 }
