@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <ctype.h>   // for isalpha(), isdigit()
+#include <string.h>
+#define MAX 100
+
+char stack[MAX];
+int top = -1;
+char lastPostfix[MAX]; // To store last result
+
+// Function to push into stack
+void push(char c) {
+    if (top == MAX - 1) {
+        printf("Stack Overflow!\n");
+        return;
+    }
+    stack[++top] = c;
+}
+
+// Function to pop from stack
+char pop() {
+    if (top == -1)
+        return -1;
+    else
+        return stack[top--];
+}
+
+// Function to return precedence of operators
+int precedence(char c) {
+    if (c == '^')
+        return 3;
+    else if (c == '*' || c == '/')
+        return 2;
+    else if (c == '+' || c == '-')
+        return 1;
+    else
+        return 0;
+}
+
+// Function to check if stack is empty
+int isEmpty() {
+    return top == -1;
+}
+
+// Function to peek at top of stack without popping
+char peek() {
+    if (top == -1)
+        return -1;
+    return stack[top];
+}
+
+// Function to convert infix to postfix following the algorithm
+void infixToPostfix(char infix[]) {
+    char postfix[MAX];
+    int i, j = 0;
+    char symbol;
+    
+    // Step 1: Initialize an empty stack and empty postfix expression
+    top = -1; // Reset stack for each new conversion
+    
+    // Step 2: Scan the infix expression from left to right
+    for (i = 0; infix[i] != '\0'; i++) {
+        symbol = infix[i];
+        
+        // Step 3: For each symbol in the infix expression
+        
+        // If the symbol is an operand (letter or number), add it to postfix
+        if (isalpha(symbol) || isdigit(symbol)) {
+            postfix[j++] = symbol;
+        }
+        // If the symbol is '(', push it onto the stack
+        else if (symbol == '(') {
+            push(symbol);
+        }
+        // If the symbol is ')'
+        else if (symbol == ')') {
+            // Pop from stack and append to postfix until '(' is encountered
+            while (!isEmpty() && peek() != '(') {
+                postfix[j++] = pop();
+            }
+            // Pop and discard the '('
+            if (!isEmpty()) {
+                pop();
+            }
+        }
+        // If the symbol is an operator (+, -, *, /, ^)
+        else if (symbol == '+' || symbol == '-' || symbol == '*' || 
+                 symbol == '/' || symbol == '^') {
+            // While stack is not empty and top has higher or equal precedence
+            while (!isEmpty() && precedence(peek()) >= precedence(symbol)) {
+                postfix[j++] = pop();
+            }
+            // Push the current operator onto the stack
+            push(symbol);
+        }
+    }
+    
+    // Step 4: Pop all remaining operators from stack and append to postfix
+    while (!isEmpty()) {
+        postfix[j++] = pop();
+    }
+    
+    postfix[j] = '\0'; // End postfix expression
+    strcpy(lastPostfix, postfix); // Store result
+    printf("\nPostfix Expression: %s\n", postfix);
+}
+
+int main() {
+    char infix[MAX];
+    int choice;
+    
+    do {
+        printf("\n----- INFIX TO POSTFIX MENU -----\n");
+        printf("1. Convert Infix to Postfix\n");
+        printf("2. Display Last Postfix Expression\n");
+        printf("3. Exit\n");
+        printf("---------------------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                printf("Enter an Infix Expression: ");
+                scanf("%s", infix);
+                infixToPostfix(infix);
+                break;
+            case 2:
+                if (strlen(lastPostfix) == 0)
+                    printf("\nNo conversion done yet.\n");
+                else
+                    printf("\nLast Postfix Expression: %s\n", lastPostfix);
+                break;
+            case 3:
+                printf("\nExiting program. Goodbye!\n");
+                break;
+            default:
+                printf("\nInvalid choice! Please try again.\n");
+        }
+    } while (choice != 3);
+    
+    return 0;
+}
