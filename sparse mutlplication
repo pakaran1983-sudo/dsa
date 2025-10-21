@@ -1,0 +1,150 @@
+#include <stdio.h>
+
+#define MAX 100
+
+// Function to read sparse matrix
+void readSparse(int sparse[MAX][3]) {
+    int rows, cols, nonZero;
+    printf("Enter rows and columns: ");
+    scanf("%d %d", &rows, &cols);
+    printf("Enter number of non-zero elements: ");
+    scanf("%d", &nonZero);
+
+    sparse[0][0] = rows;
+    sparse[0][1] = cols;
+    sparse[0][2] = nonZero;
+
+    printf("Enter row, column and value (each on new line):\n");
+    for (int i = 1; i <= nonZero; i++) {
+        scanf("%d %d %d", &sparse[i][0], &sparse[i][1], &sparse[i][2]);
+    }
+}
+
+// Function to print sparse matrix
+void printSparse(int sparse[MAX][3]) {
+    int n = sparse[0][2];
+    printf("\nRow\tCol\tVal\n");
+    for (int i = 0; i <= n; i++)
+        printf("%d\t%d\t%d\n", sparse[i][0], sparse[i][1], sparse[i][2]);
+}
+
+// Function to multiply two sparse matrices
+void multiplySparse(int A[MAX][3], int B[MAX][3], int C[MAX][3]) {
+    if (A[0][1] != B[0][0]) {
+        printf("Matrix multiplication not possible!\n");
+        C[0][2] = 0;
+        return;
+    }
+
+    int temp[MAX][3];
+    int k = 1;
+
+    // Step 1: Transpose B to simplify matching
+    int B_T[MAX][3];
+    int p = 1;
+    B_T[0][0] = B[0][1];
+    B_T[0][1] = B[0][0];
+    B_T[0][2] = B[0][2];
+
+    for (int col = 0; col < B[0][1]; col++) {
+        for (int i = 1; i <= B[0][2]; i++) {
+            if (B[i][1] == col) {
+                B_T[p][0] = B[i][1];
+                B_T[p][1] = B[i][0];
+                B_T[p][2] = B[i][2];
+                p++;
+            }
+        }
+    }
+
+    // Step 2: Multiply A and B_T
+    int t = 1;
+    for (int i = 1; i <= A[0][2]; i++) {
+        for (int j = 1; j <= B_T[0][2]; j++) {
+            if (A[i][1] == B_T[j][1]) {
+                int row = A[i][0];
+                int col = B_T[j][0];
+                int val = A[i][2] * B_T[j][2];
+
+                int found = 0;
+                for (int x = 1; x < k; x++) {
+                    if (temp[x][0] == row && temp[x][1] == col) {
+                        temp[x][2] += val;
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found) {
+                    temp[k][0] = row;
+                    temp[k][1] = col;
+                    temp[k][2] = val;
+                    k++;
+                }
+            }
+        }
+    }
+
+    C[0][0] = A[0][0];
+    C[0][1] = B[0][1];
+    C[0][2] = k - 1;
+
+    for (int i = 1; i < k; i++) {
+        C[i][0] = temp[i][0];
+        C[i][1] = temp[i][1];
+        C[i][2] = temp[i][2];
+    }
+}
+
+// ---------------- MENU ----------------
+int main() {
+    int A[MAX][3], B[MAX][3], C[MAX][3];
+    int choice;
+
+    do {
+        printf("\n--- SPARSE MATRIX MULTIPLICATION ---\n");
+        printf("1. Enter Matrix A\n");
+        printf("2. Enter Matrix B\n");
+        printf("3. Display Matrices\n");
+        printf("4. Multiply A and B\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("\nEnter Matrix A:\n");
+                readSparse(A);
+                break;
+
+            case 2:
+                printf("\nEnter Matrix B:\n");
+                readSparse(B);
+                break;
+
+            case 3:
+                printf("\nMatrix A (Sparse Representation):");
+                printSparse(A);
+                printf("\nMatrix B (Sparse Representation):");
+                printSparse(B);
+                break;
+
+            case 4:
+                multiplySparse(A, B, C);
+                if (C[0][2] != 0) {
+                    printf("\nResultant Matrix C (A × B):");
+                    printSparse(C);
+                }
+                break;
+
+            case 5:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice!\n");
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
