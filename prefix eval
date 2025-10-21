@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+
+#define MAX 100
+
+int stack[MAX];
+int top = -1;
+
+// Push function
+void push(int value) {
+    if (top == MAX - 1)
+        printf("Stack Overflow\n");
+    else
+        stack[++top] = value;
+}
+
+// Pop function
+int pop() {
+    if (top == -1) {
+        printf("Stack Underflow\n");
+        return 0;
+    }
+    return stack[top--];
+}
+
+// Function to evaluate prefix expression
+int evaluatePrefix(char prefix[]) {
+    int len = strlen(prefix);
+    for (int i = len - 1; i >= 0; i--) {
+        char c = prefix[i];
+
+        // If operand, push to stack
+        if (isdigit(c)) {
+            push(c - '0'); // Convert char to int
+        } 
+        // If operator, pop two operands and evaluate
+        else {
+            int op1 = pop();
+            int op2 = pop();
+            int result;
+
+            switch (c) {
+                case '+': result = op1 + op2; break;
+                case '-': result = op1 - op2; break;
+                case '*': result = op1 * op2; break;
+                case '/': result = op1 / op2; break;
+                case '^': result = pow(op1, op2); break;
+                default:
+                    printf("Invalid operator %c\n", c);
+                    return 0;
+            }
+            push(result);
+        }
+    }
+
+    return pop(); // Final result
+}
+
+// ---------------- MENU DRIVEN ----------------
+int main() {
+    char prefix[MAX];
+    int choice;
+
+    do {
+        printf("\n--- PREFIX EXPRESSION EVALUATION ---\n");
+        printf("1. Enter Prefix Expression\n");
+        printf("2. Evaluate Expression\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // clear buffer
+
+        switch (choice) {
+            case 1:
+                printf("Enter prefix expression: ");
+                gets(prefix);
+                break;
+
+            case 2:
+                if (strlen(prefix) == 0) {
+                    printf("Enter prefix expression first!\n");
+                } else {
+                    int result = evaluatePrefix(prefix);
+                    printf("Result = %d\n", result);
+                }
+                break;
+
+            case 3:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice!\n");
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
