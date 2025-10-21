@@ -1,69 +1,82 @@
 #include <stdio.h>
 
-void bubblesortdescending(int a[],int n) {
-    int i,j,key;
-    for(i=1;i<n;i++)
-    {
-      key=a[i];
-      j=i-1;
-      while(j>=0 && a[j]>key)
-      {
-          a[j+1]=a[j];
-          j=j-1;
-      }
-      a[j+1]=key;
-    
-}
+void insertionsort(int a[], int n) {
+    int i, j, key;
+    for (i = 1; i < n; i++) {
+        key = a[i];
+        j = i - 1;
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            j = j - 1;
+        }
+        a[j + 1] = key;
+    }
 }
 
-void printarray(int a[],int n){
-    
+void printarray(int a[], int n) {
     int i;
-    printf("The sorted array is here");
-    for(i=0;i<n;i++)
-    {
-        printf("%d",a[i]);
+    printf("Array elements:\n");
+    for (i = 0; i < n; i++) {
+        printf("%d ", a[i]);
     }
     printf("\n");
 }
 
-void mean(int a[],int n)
-{
-    int i,sum=0;
-    float meanvalue,median;
-    for(i=0;i<n;i++)
-    {
-    sum=sum+a[i];
+void mean_median(int a[], int n) {
+    int i, sum = 0;
+    float meanvalue, median;
+
+    for (i = 0; i < n; i++) {
+        sum += a[i];
     }
-    meanvalue=sum/n;
-    printf("%.2f",meanvalue);
+
+    meanvalue = (float)sum / n;
+    printf("Mean = %.2f\n", meanvalue);
+
     if (n % 2 == 0)
-        printf("Median = %.2f\n", (a[n / 2 - 1] + a[n / 2]) /2.0);
+        median = (a[n / 2 - 1] + a[n / 2]) / 2.0;
     else
-        printf("Median = %d\n", a[n / 2]);
-    
+        median = a[n / 2];
+
+    printf("Median = %.2f\n", median);
 }
 
-
-int main(){
-    int i,a[20],n;
-    printf("Enter the number of elements in the array");
-    scanf("%d",&n);
-    printf("Enter the array elements ");
-    for(i=0;i<n;i++)
-    {
-    scanf("%d",&a[i]);
+int main() {
+    int a[20], n, i, choice;
+    printf("Enter the number of elements in the array: ");
+    scanf("%d", &n);
+    printf("Enter the array elements:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
     }
-    
-    
-    bubblesortdescending(a,n);
-    printf("The sorted array in the descending order \n");
-    
-    printarray(a,n);
-    
-    printf("THe mean is ");
-    mean(a,n);
-    
-    return 0;
 
+    while (1) {
+        printf("\n---- MENU ----\n");
+        printf("1. Sort the array (Ascending)\n");
+        printf("2. Display array\n");
+        printf("3. Find Mean and Median\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            insertionsort(a, n);
+            printf("Array sorted successfully.\n");
+            break;
+        case 2:
+            printarray(a, n);
+            break;
+        case 3:
+            mean_median(a, n);
+            break;
+        case 4:
+            printf("Exiting program.\n");
+            return 0;
+        default:
+            printf("Invalid choice! Try again.\n");
+        }
+    }
+
+    return 0;
 }
